@@ -1,4 +1,3 @@
-import board
 import neopixel
 import time
 import argparse
@@ -12,7 +11,11 @@ from mfrc522 import SimpleMFRC522
 # GPIO Pin
 pixel_pin = board.D18
 
-ring_pixels = 40
+#Light strip
+RING_PIXELS = 40
+WHEEL_HALFWAY = 85
+WHEEL_END = 170
+
 reverse_circle = bool(True)
 log = logging.getLogger('main')
 log.setLevel(logging.CRITICAL)
@@ -28,8 +31,8 @@ green = COLORS["green"]
 class MagicBand():
     def __init__(self):
             self.RING_LIGHT_SIZE = 4
-            self.total_pixels = ring_pixels
-            self.ring_pixels = ring_pixels
+            self.total_pixels = RING_PIXELS
+            self.ring_pixels = RING_PIXELS
             self.pixels = neopixel.NeoPixel(pixel_pin, self.total_pixels, brightness=1.0, pixel_order=neopixel.RGB)
             self.rdwr_commands = { }
             self.currentScan = 0
@@ -44,13 +47,13 @@ class MagicBand():
                     description="")
             
     def wheel(self, pos):
-        if pos < 85:
+        if pos < WHEEL_HALFWAY:
              return (pos * 3, 255 - pos * 3, 0)
-        elif pos < 170:
-             pos -= 85
+        elif pos < WHEEL_END:
+             pos -= WHEEL_HALFWAY
              return (255 - pos * 3, 0, pos * 3)
         else:
-             pos -= 170
+             pos -= WHEEL_END
              return (0, pos * 3, 255 - pos * 3)
             
     def scan(self):
